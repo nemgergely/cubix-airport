@@ -1,16 +1,17 @@
 package hu.cubix.airport;
 
 import hu.cubix.airport.service.PriceService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@AllArgsConstructor
 public class AirportApplication implements CommandLineRunner {
 
-	@Autowired
-	PriceService priceService;
+	private PriceService priceService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(AirportApplication.class, args);
