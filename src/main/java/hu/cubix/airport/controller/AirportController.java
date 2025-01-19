@@ -4,6 +4,7 @@ import hu.cubix.airport.dto.AirportDto;
 import hu.cubix.airport.mapper.AirportMapper;
 import hu.cubix.airport.model.Airport;
 import hu.cubix.airport.service.AirportService;
+import hu.cubix.airport.service.LogEntryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -50,9 +51,7 @@ public class AirportController {
         airportDto = new AirportDto(airportDto.id(), airportDto.name(), airportDto.iata());
         Airport airport = airportMapper.dtoToAirport(airportDto);
         Airport updatedAirport = airportService.update(airport);
-        if (updatedAirport == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+
         return airportMapper.airportToDto(updatedAirport);
     }
 

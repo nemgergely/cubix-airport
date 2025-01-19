@@ -3,6 +3,7 @@ package hu.cubix.airport.controller;
 import hu.cubix.airport.dto.AirportDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -13,6 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase
 class AirportControllerIntTest {
 
     @Autowired
@@ -23,11 +25,7 @@ class AirportControllerIntTest {
     @Test
     void testThatCreatedAirportIsListed() {
         List<AirportDto> airportsBefore = getAllAirports();
-        long newId = 100;
-        if (!airportsBefore.isEmpty()) {
-            newId = airportsBefore.get((airportsBefore.size() - 1)).id() + 1;
-        }
-        AirportDto newAirport = new AirportDto(newId, "test name", "test iata");
+        AirportDto newAirport = new AirportDto("test name", "iata5");
 
         createAirport(newAirport);
         List<AirportDto> airportsAfter = getAllAirports();
@@ -37,6 +35,7 @@ class AirportControllerIntTest {
             .containsExactlyElementsOf(airportsBefore);
         assertThat(airportsAfter.get(airportsAfter.size() - 1))
             .usingRecursiveComparison()
+            .ignoringFields("id")
             .isEqualTo(newAirport);
     }
 

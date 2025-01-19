@@ -5,12 +5,17 @@ import hu.cubix.airport.model.Airport;
 import hu.cubix.airport.model.Flight;
 import hu.cubix.airport.repository.AirportRepository;
 import hu.cubix.airport.repository.FlightRepository;
+import hu.cubix.airport.specification.FlightSpecification;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static hu.cubix.airport.specification.FlightSpecification.*;
 
 @Service
 @AllArgsConstructor
@@ -21,10 +26,11 @@ public class AirportService {
 
     private final AirportRepository airportRepository;
     private final FlightRepository flightRepository;
+    private final LogEntryService logEntryService;
 
     @Transactional
     public Airport create(Airport airport) {
-        if (findById(airport.getId()) != null) {
+        if (airport.getId() != null && findById(airport.getId()) != null) {
             return null;
         }
         return save(airport);
@@ -35,6 +41,7 @@ public class AirportService {
         if (findById(airport.getId()) == null) {
             return null;
         }
+        logEntryService.logAirportChange(airport);
         return save(airport);
     }
 
@@ -43,7 +50,7 @@ public class AirportService {
         return airportRepository.findAll();
     }
 
-    public Airport findById(long id) {
+    public Airport findById(Long id) {
 //        return em.find(Airport.class, id);
         return airportRepository.findById(id).orElse(null);
     }
@@ -62,6 +69,28 @@ public class AirportService {
         return flightRepository.save(flight);
     }
 
+    public List<Flight> findFlightsByExample(Flight flight) {
+        Long id = flight.getId();
+        String flightNumber = flight.getFlightNumber();
+        Long takeoffId = null;
+        Airport takeoff = flight.getTakeoff();
+        if (takeoff != null) {
+            takeoffId = takeoff.getId();
+        }
+        Specification<Flight> specs = Specification.where(null);
+        if (id != null) {
+            specs = specs.and(hasId(id));
+        }
+        if (StringUtils.hasLength(flightNumber)) {
+            specs = specs.and(flightNumberStartsWith(flightNumber));
+        }
+        if (takeoffId != null) {
+            specs = specs.and(flightHasTakeoffId(takeoffId));
+        }
+
+        return flightRepository.findAll(specs);
+    }
+
     private Airport save(Airport airport) {
         throwIfNonUniqueIata(airport);
 //        if (airport.getId() == 0) {
@@ -74,7 +103,7 @@ public class AirportService {
 
     private void throwIfNonUniqueIata(Airport airport) {
         long count = 0;
-        if (airport.getId() == 0) {
+        if (airport.getId() == null) {
 //            count = (long) em.createNamedQuery("Airport.countByIata")
 //                .setParameter("iata", airport.getIata())
 //                .getSingleResult();

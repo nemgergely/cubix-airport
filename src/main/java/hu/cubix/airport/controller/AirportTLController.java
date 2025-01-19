@@ -15,7 +15,7 @@ public class AirportTLController {
     private final List<Airport> airports = new ArrayList<>();
 
     {
-        airports.add(new Airport(1, "Budapest Liszt Ferenc International", "BUD"));
+        airports.add(new Airport(1L, "Budapest Liszt Ferenc International", "BUD"));
     }
 
     @GetMapping("/")
