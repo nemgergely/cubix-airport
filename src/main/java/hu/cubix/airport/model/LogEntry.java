@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 
@@ -23,9 +24,11 @@ public class LogEntry {
 
     private LocalDateTime ts;
     private String description;
+    private String username;
 
     public LogEntry(String description) {
         this.ts = LocalDateTime.now();
         this.description = description;
+        this.username = SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

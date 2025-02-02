@@ -5,9 +5,9 @@ import hu.cubix.airport.model.Airport;
 import hu.cubix.airport.model.Flight;
 import hu.cubix.airport.repository.AirportRepository;
 import hu.cubix.airport.repository.FlightRepository;
-import hu.cubix.airport.specification.FlightSpecification;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -37,6 +37,7 @@ public class AirportService {
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('admin')")
     public Airport update(Airport airport) {
         if (findById(airport.getId()) == null) {
             return null;

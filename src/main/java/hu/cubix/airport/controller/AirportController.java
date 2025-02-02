@@ -4,7 +4,6 @@ import hu.cubix.airport.dto.AirportDto;
 import hu.cubix.airport.mapper.AirportMapper;
 import hu.cubix.airport.model.Airport;
 import hu.cubix.airport.service.AirportService;
-import hu.cubix.airport.service.LogEntryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
